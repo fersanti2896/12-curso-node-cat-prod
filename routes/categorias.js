@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { validarCampos } = require('../middlewares');
+const { validarCampos, validarJWT } = require('../middlewares');
 const { categoriasAll, categoriaById, categoriaCreate, categoriaUpdate, categoriaDelete } = require('../controller/categoriasController');
 
 const router = Router();
@@ -11,7 +11,11 @@ router.get('/', categoriasAll);
 router.get('/:id', categoriaById);
 
 /* Crear categoria por token */
-router.post('/', categoriaCreate);
+router.post('/', [
+    validarJWT,
+    check('name', 'El nombre de la categoria es obligatorio').not().isEmpty(),
+    validarCampos
+], categoriaCreate);
 
 /* Actualiza la categoria por token */
 router.put('/:id', categoriaUpdate);
