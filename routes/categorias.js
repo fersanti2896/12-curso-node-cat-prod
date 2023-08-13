@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { validarCampos, validarJWT, haveRole } = require('../middlewares');
+const { validarCampos, validarJWT, haveRole, isAdminRole } = require('../middlewares');
 const { categoriasAll, categoriaById, categoriaCreate, categoriaUpdate, categoriaDelete } = require('../controller/categoriasController');
 const { existsCategoriaById, existsCategoriaByNombre } = require('../helpers/db-validators');
 
@@ -36,7 +36,7 @@ router.put('/:id', [
 /* Elimina una categoria si es un admin */
 router.delete('/:id', [
     validarJWT,
-    haveRole('ADMIN_ROLE'),
+    isAdminRole,
     check('id', 'No es un id de Mongo válido.').isMongoId(),
     check('id').custom( existsCategoriaById ),
     validarCampos
