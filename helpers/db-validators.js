@@ -36,8 +36,33 @@ const existsCategoriaById = async( id ) => {
     }
 }
 
+const existsCategoriaByNombre = async ( req, res, next ) => {
+    const { name } = req.body;
+    const { id } = req.params;
+    const nameActualizado = name.toUpperCase();
+  
+    try {
+      const categoriaActual = await Categoria.findById(id);
+  
+      if (categoriaActual.name !== nameActualizado) {
+        const existsCategoria = await Categoria.findOne({ name: nameActualizado });
+  
+        if (existsCategoria) {
+          throw new Error(`La categoría ${ nameActualizado.toUpperCase() } ya existe.`);
+        }
+      }
+  
+      next();
+    } catch (error) {
+        res.status(400).json({
+            error: `La categoria ${ name.toUpperCase() } ya existe.`
+        })
+    }
+};
+
 module.exports = {
     existsCategoriaById,
+    existsCategoriaByNombre,
     existsUserById,
     isEmailExists,
     isRoleValid
